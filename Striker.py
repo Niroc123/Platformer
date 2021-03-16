@@ -28,7 +28,7 @@ class PlayerCharacter(arcade.Sprite):
         self.scale = SPRITE_SCALING_PLAYER
 
         self.bam = False
-
+        self.pressed = False
         self.jumping = False
 
         self.idle_texture_pair = load_texture_pair("Sprites/Characters/Striker_idle.png")
@@ -49,47 +49,52 @@ class PlayerCharacter(arcade.Sprite):
 
     def on_key_press(self, key):
 
-        if key == arcade.key.F:
-            self.bam = True
+        if key == arcade.key.N:
+
             print("1")
 
     def on_key_release(self, key):
 
         if key == arcade.key.N or key == arcade.key.KEY_1:
+            self.pressed = True
             return
 
+
+
+
     def update_animation(self, delta_time: float = 1/60):
-        print(self.bam)
-        if self.bam:
-            self.texture = self.attack_texture[self.cur_attack_texture // UPDATES_PER_FRAME][
-                self.character_face_direction]
+
+        if self.pressed:
+            self.bam = True
+            print(self.bam)
+
+        while self.bam:
+            print("check")
             self.cur_attack_texture += 1
             if self.cur_attack_texture > 1 * UPDATES_PER_FRAME:
                 self.cur_attack_texture = 0
-        else:
-            if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
-                self.character_face_direction = LEFT_FACING
-            elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
-                self.character_face_direction = RIGHT_FACING
+            self.texture = self.attack_texture[self.cur_attack_texture // UPDATES_PER_FRAME][
+                self.character_face_direction]
 
-            if self.change_x == 0 and self.change_y == 0:
-                self.texture = self.idle_texture_pair[self.character_face_direction]
-                return
+        if self.change_x < 0 and self.character_face_direction == RIGHT_FACING:
+            self.character_face_direction = LEFT_FACING
+        elif self.change_x > 0 and self.character_face_direction == LEFT_FACING:
+            self.character_face_direction = RIGHT_FACING
 
-            if self.change_x < 0 or self.change_x > 0:
-                # Walking animation
-                self.cur_texture += 1
-                if self.cur_texture > 3 * UPDATES_PER_FRAME:
-                    self.cur_texture = 0
-                self.texture = self.walk_textureslr[self.cur_texture // UPDATES_PER_FRAME][self.character_face_direction]
+        if self.change_x == 0 and self.change_y == 0:
+            self.texture = self.idle_texture_pair[self.character_face_direction]
+            return
 
+        if self.change_x < 0 or self.change_x > 0:
+            # Walking animation
+            self.cur_texture += 1
+            if self.cur_texture > 3 * UPDATES_PER_FRAME:
+                self.cur_texture = 0
+            self.texture = self.walk_textureslr[self.cur_texture // UPDATES_PER_FRAME][self.character_face_direction]
 
-            if self.change_y > 0:
-                self.texture = self.jump_texture_pair[self.character_face_direction]
-                return
-            elif self.change_y < 0:
-                self.texture = self.jump_texture_pair[self.character_face_direction]
-                return
-
-            if self.bam:
-                print("5")
+        if self.change_y > 0:
+            self.texture = self.jump_texture_pair[self.character_face_direction]
+            return
+        elif self.change_y < 0:
+            self.texture = self.jump_texture_pair[self.character_face_direction]
+            return
