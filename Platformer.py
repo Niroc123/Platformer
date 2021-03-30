@@ -81,7 +81,7 @@ class GameView(arcade.View):
 
         # arcade.Sprite("Sprites/Player_Ball.png", SPRITE_SCALING_PLAYER)
         self.player_sprite = Striker.PlayerCharacter()
-        self.player_sprite.center_x = 200
+        self.player_sprite.center_x = 400
         self.player_sprite.center_y = 185
         self.player_list.append(self.player_sprite)
 
@@ -124,7 +124,7 @@ class GameView(arcade.View):
         arcade.start_render()
 
         self.player_bullet_list.draw()
-        self.background_list.draw()
+        # self.background_list.draw()
         self.platform_list.draw()
         self.player_list.draw()
 

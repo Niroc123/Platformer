@@ -21,15 +21,16 @@ def load_texture_pair(filename):
 class PlayerCharacter(arcade.Sprite):
     def __init__(self):
         super().__init__()
-
+        self.chez = 0
         self.cur_texture = 0
         self.cur_attack_texture = 0
         self.character_face_direction = RIGHT_FACING
         self.scale = SPRITE_SCALING_PLAYER
 
         self.bam = False
-        self.pressed = False
+        self.pressed = True
         self.jumping = False
+
 
         self.idle_texture_pair = load_texture_pair("Sprites/Characters/Striker_idle.png")
         self.jump_texture_pair = load_texture_pair("Sprites/Characters/Jumping.png")
@@ -47,29 +48,34 @@ class PlayerCharacter(arcade.Sprite):
 
         self.texture = self.idle_texture_pair[0]
 
-    def on_key_press(self, key):
+    def on_key_press(self, key: int):
 
         if key == arcade.key.N:
+            self.pressed = False
+            self.chez = 1
+            #print("1")
+            print(f'pressed:{self.pressed}')
 
-            print("1")
-
-    def on_key_release(self, key):
+    def on_key_release(self, key: int):
 
         if key == arcade.key.N or key == arcade.key.KEY_1:
-            self.pressed = True
-            return
+            self.pressed = False
+            print(f'releaded press:{self.pressed}')
+
 
 
 
 
     def update_animation(self, delta_time: float = 1/60):
+        #print(self.pressed)
+        print(self.chez)
+        """if self.pressed:
 
-        if self.pressed:
             self.bam = True
-            print(self.bam)
+            print(self.bam)"""
 
-        while self.bam:
-            print("check")
+        if not self.pressed:
+            print("check345")
             self.cur_attack_texture += 1
             if self.cur_attack_texture > 1 * UPDATES_PER_FRAME:
                 self.cur_attack_texture = 0

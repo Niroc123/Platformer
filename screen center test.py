@@ -2,20 +2,19 @@
 import Striker
 from Striker import *
 
-# import math
 
 SCREEN_HEIGHT = 700
 SCREEN_WIDTH = 1000
-SCREEN_TITLE = "Pla1tformer"
+SCREEN_TITLE = "Platformer"
 VIEWPORT_MARGIN = 350
 
 SPRITE_SCALING_ATTACK = 0.25
-SPRITE_SCALING_PLAYER = 1
-SPRITE_SCALING_WALL = 0.6
+SPRITE_SCALING_PLAYER = 0.5
+SPRITE_SCALING_WALL = 0.3
 
 MOVEMENT_SPEED = 5
-JUMP_SPEED = 15
-GRAVITY = 0.5
+JUMP_SPEED = 10
+GRAVITY = 1
 
 RIGHT_FACING = 0
 LEFT_FACING = 1
@@ -60,6 +59,7 @@ class GameView(arcade.View):
         self.screen_center_y = None
         self.player_health = None
         self.challenger_health = None
+        self.wall_rescale = 0
 
         self.left_pressed = False
         self.right_pressed = False
@@ -74,15 +74,19 @@ class GameView(arcade.View):
         self.challenger_down_pressed = False
         self.challenger_jump_needs_reset = False
         self.challenger_attack_key_pressed = False
+        self.background = None
 
         self.cur_texture = 0
         self.character_face_direction = RIGHT_FACING
         self.player_face_direction = RIGHT_FACING
         self.challenger_face_direction = RIGHT_FACING
 
+        self.physics_engine = None
+        self.challenger_physics_engine = None
+
     def setup(self):
         self.player_list = arcade.SpriteList()
-        self.player = Striker.PlayerCharacter
+        self.player = Striker.PlayerCharacter()
         self.player_bullet_list = arcade.SpriteList()
 
         self.challenger_list = arcade.SpriteList()
@@ -99,16 +103,16 @@ class GameView(arcade.View):
 
         # arcade.Sprite("Sprites/Player_Ball.png", SPRITE_SCALING_PLAYER)
         self.player_sprite = Striker.PlayerCharacter()
-        self.player_sprite.center_x = 200
+        self.player_sprite.center_x = 400
         self.player_sprite.center_y = 185
+        self.player_sprite.scale = 0.5
         self.player_list.append(self.player_sprite)
 
         self.challenger_sprite = Striker.PlayerCharacter()
-        self.challenger_sprite.center_x = 300
+        self.challenger_sprite.center_x = 500
         self.challenger_sprite.center_y = 185
+        self.challenger_sprite.scale = 0.5
         self.challenger_list.append(self.challenger_sprite)
-
-
 
         self.platform_list = arcade.SpriteList()
         self.background = arcade.SpriteList()
@@ -140,13 +144,19 @@ class GameView(arcade.View):
                                            self.platform_list,
                                            gravity_constant=GRAVITY, )
 
+
+
+
+
+
     def on_show(self):
         self.setup()
+
 
     def on_draw(self):
         arcade.start_render()
 
-        self.background_list.draw()
+        # self.background_list.draw()
         self.platform_list.draw()
         self.player_list.draw()
         self.challenger_list.draw()
@@ -263,7 +273,7 @@ class GameView(arcade.View):
 
     def on_key_press(self, key, modifiers):
 
-        self.player.on_key_press(self, key)
+        self.player.on_key_press(key)
 
         # player keys
         if key == arcade.key.W:
@@ -293,7 +303,7 @@ class GameView(arcade.View):
 
     def on_key_release(self, key, modifiers):
 
-        self.player.on_key_release(self, key)
+        self.player.on_key_release(key)
 
         # player keys
         if key == arcade.key.W:
@@ -365,11 +375,14 @@ class GameView(arcade.View):
                 bullet.remove_from_sprite_lists()
                 self.player_health -= 1
 
-        if self.challenger_health < 0  or self.player_health < 0:
+        if self.challenger_health < 0 or self.player_health < 0:
             print("we have a winner")
 
-
         # focusing the screen on the center between the players
+
+
+
+
 
         if self.challenger_sprite.change_x < 0 and self.challenger_face_direction == RIGHT_FACING:
             self.challenger_face_direction = LEFT_FACING
@@ -389,8 +402,7 @@ class GameView(arcade.View):
         if self.player_sprite.center_y > self.challenger_sprite.center_y:
             self.screen_center_y = (self.player_sprite.center_y + self.challenger_sprite.center_y) / 2
         else:
-            self.screen_center_y = (self.challenger_sprite.center_y +  self.player_sprite.center_y) / 2
-
+            self.screen_center_y = (self.challenger_sprite.center_y + self.player_sprite.center_y) / 2
 
             # Scroll left
         left_boundary = self.view_left + VIEWPORT_MARGIN
@@ -422,8 +434,10 @@ class GameView(arcade.View):
                                 self.view_bottom,
                                 SCREEN_HEIGHT + self.view_bottom)
 
-        if self.player_sprite.center_y < -50:
-            arcade.close_window()
+        # if self.player_sprite.center_y < -50:
+        # arcade.close_window()
+
+
 
 
 def main():
